@@ -18,5 +18,6 @@
 }
 
 .DraftEditor-root {
-  height: 100% !important;
+  height: calc(100% - 48px) !important;
+  margin: 24px;
 }
