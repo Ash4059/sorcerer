@@ -18,7 +18,7 @@ const contentState = (numberOfLines) => {
 };
 
 const TextEditor = ({ editorState, setEditorState }) => {
-  useEffect(() => {
+  const loadEditorState = () => {
     const savedState = localStorage.getItem("editorState");
     if (savedState) {
       try {
@@ -30,33 +30,29 @@ const TextEditor = ({ editorState, setEditorState }) => {
     } else {
       setEditorState(EditorState.createWithContent(contentState(36)));
     }
-  }, []);
-
-  const customStyleMap = {
-    RED: {
-      color: "red",
-    },
-    HEADER: {
-        fontSize: "2em",
-        fontWeight: "bold"
-    }
   };
+
+  useEffect(loadEditorState, []);
 
   const handleEditorChange = (newEditorState) => {
     setEditorState(newEditorState);
   };
 
-
   const handleBeforeInput = (char, currentEditorState) => {
-    const contentState = currentEditorState.getCurrentContent();
-    const selectionState = currentEditorState.getSelection();
-    const startKey = selectionState.getStartKey();
-    const block = contentState.getBlockForKey(startKey);
+    const currentContent = currentEditorState.getCurrentContent();
+    const currentSelection = currentEditorState.getSelection();
+    const blockKey = currentSelection.getStartKey();
+    const block = currentContent.getBlockForKey(blockKey);
     const blockText = block.getText();
 
     if (char === " ") {
-      const updateEditorState = updateStyle(editorState,contentState,selectionState,blockText);
-      setEditorState(updateEditorState);
+      const newState = updateStyle(
+        editorState,
+        currentContent,
+        currentSelection,
+        blockText
+      );
+      setEditorState(newState);
       if (Object.keys(COMMANDS).includes(blockText)) {
         return "handled";
       }
@@ -65,11 +61,19 @@ const TextEditor = ({ editorState, setEditorState }) => {
   };
 
   return (
-    <div className="editor" >
+    <div className="editor">
       <Editor
         editorState={editorState}
         handleBeforeInput={handleBeforeInput}
-        customStyleMap={customStyleMap}
+        customStyleMap={{
+          RED: {
+            color: "red",
+          },
+          HEADER: {
+            fontSize: "2em",
+            fontWeight: "bold",
+          },
+        }}
         onChange={handleEditorChange}
       />
     </div>
