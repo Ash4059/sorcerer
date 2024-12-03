@@ -2,7 +2,7 @@ import { convertToRaw } from "draft-js";
 import React from "react";
 
 const Title = ({ editorState }) => {
-  const save = () => {
+  const handleSave = () => {
     const raw = convertToRaw(editorState.getCurrentContent());
     localStorage.setItem("editorState", JSON.stringify(raw));
   };
@@ -26,7 +26,7 @@ const Title = ({ editorState }) => {
           padding: "4px 0",
           borderColor: "#b2c7e4",
         }}
-        onClick={save}
+        onClick={handleSave}
       >
         Save
       </button>

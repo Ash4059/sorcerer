@@ -1,6 +1,14 @@
 import React, { useEffect } from "react";
-import { Editor, EditorState, ContentState, convertFromRaw, Modifier, RichUtils } from "draft-js";
+import {
+  Editor,
+  EditorState,
+  ContentState,
+  convertFromRaw,
+  RichUtils,
+} from "draft-js";
 import "draft-js/dist/Draft.css";
+import { COMMANDS } from "../utils/constant";
+import { updateStyle } from "../utils/stylesLogic";
 
 const contentState = (numberOfLines) => {
   let content = "";
@@ -11,7 +19,6 @@ const contentState = (numberOfLines) => {
 };
 
 const TextEditor = ({ editorState, setEditorState }) => {
-
   useEffect(() => {
     const savedState = localStorage.getItem("editorState");
     if (savedState) {
@@ -26,7 +33,7 @@ const TextEditor = ({ editorState, setEditorState }) => {
     }
   }, []);
 
-  const style = {
+  const editorStyle = {
     border: "2px solid #b2c7e4",
     height: "720px",
     overflowY: "auto",
@@ -34,117 +41,63 @@ const TextEditor = ({ editorState, setEditorState }) => {
     padding: "0px 16px",
   };
 
-  const handleEditChange = (newEditorState) => {
+  const customStyleMap = {
+    RED: {
+      color: "red",
+    },
+    HEADER: {
+        fontSize: "2em",
+        fontWeight: "bold"
+    }
+  };
+
+  const handleEditorChange = (newEditorState) => {
     setEditorState(newEditorState);
   };
 
-  const handleBeforeInput = (chars, editorState) => {
-      const currentContent = editorState.getCurrentContent();
-      const selection = editorState.getSelection();
-      const startKey = selection.getStartKey();
-      const startOffset = selection.getStartOffset();
-
-      let newEditorState = editorState;
-
-      if(chars === ' ' && startOffset > 0 && startOffset < 4) {
-          const block = currentContent.getBlockForKey(startKey);
-          const text = block.getText();
-
-          if(text === '#') {
-            const newContentState = Modifier.replaceText(
-              currentContent,
-              selection.merge({
-                anchorOffset: 0,
-                focusOffset: 1
-              }),
-              ''
-            );
-            newEditorState = EditorState.push(
-              editorState,
-              newContentState,
-              'change-block-type'
-            );
-            newEditorState = RichUtils.toggleBlockType(
-                newEditorState,
-                'header-one'
-            );
-            setEditorState(newEditorState);
-            return 'handled';
-          }
-
-          if(text === '*') {
-            const newContentState = Modifier.replaceText(
-              currentContent,
-              selection.merge({
-                anchorOffset: 0,
-                focusOffset: 1
-              }),
-              ''
-            );
-            newEditorState = EditorState.push(
-              editorState,
-              newContentState,
-              'change-inline-style'
-            );
-            newEditorState = RichUtils.toggleInlineStyle(
-                newEditorState,
-                'BOLD'
-            );
-            setEditorState(newEditorState);
-            return 'handled';
-          }
-          if(text === '**'){
-            const newContentState = Modifier.replaceText(
-              currentContent,
-              selection.merge({
-                anchorOffset: 0,
-                focusOffset: 2
-              }),
-              ''
-            );
-            newEditorState = EditorState.push(
-              editorState,
-              newContentState,
-              'change-inline-style'
-            );
-            newEditorState = RichUtils.toggleInlineStyle(
-                newEditorState,
-                'RED'
-            );
-            setEditorState(newEditorState);
-            return 'handled';
-          }
-          if(text === '***') {
-            const newContentState = Modifier.replaceText(
-              currentContent,
-              selection.merge({
-                anchorOffset: 0,
-                focusOffset: 3
-              }),
-              ''
-            );
-            newEditorState = EditorState.push(
-              editorState,
-              newContentState,
-              'change-inline-style'
-            );
-            newEditorState = RichUtils.toggleInlineStyle(
-                newEditorState,
-                'UNDERLINE'
-            );
-            setEditorState(newEditorState);
-            return 'handled';
-          }
-          return 'not-handled';
-      }
+  const isNewineStarted = (selectionState) => {
+    return (selectionState.isCollapsed() && selectionState.getStartOffset() === 0)
   }
 
+  const toggleInlineStyle = (editorState, editorStyle) => {
+    return RichUtils.toggleInlineStyle(
+        editorState,
+        editorStyle
+    );
+  }
+
+  const toggleBlockType = (editorState, editorStyle) => {
+    return RichUtils.toggleBlockType(
+        editorState,
+        editorStyle
+    );
+  }
+
+  const handleBeforeInput = (char, currentEditorState) => {
+    const contentState = currentEditorState.getCurrentContent();
+    const selectionState = currentEditorState.getSelection();
+    const startKey = selectionState.getStartKey();
+    const block = contentState.getBlockForKey(startKey);
+    const blockText = block.getText();
+
+    if (char === " ") {
+      const updateEditorState = updateStyle(editorState,contentState,selectionState,block,blockText);
+      setEditorState(updateEditorState);
+      if (Object.keys(COMMANDS).includes(blockText)) {
+        return "handled";
+      }
+    }
+
+    return "not-handled";
+  };
+
   return (
-    <div style={style}>
+    <div style={editorStyle}>
       <Editor
         editorState={editorState}
         handleBeforeInput={handleBeforeInput}
-        onChange={handleEditChange}
+        customStyleMap={customStyleMap}
+        onChange={handleEditorChange}
       />
     </div>
   );

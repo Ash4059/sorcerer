@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { EditorState } from 'draft-js';
-import Editor from './Component/TextEditor';
-import Title from './Component/Title';
+import Editor from './component/TextEditor';
+import Title from './component/Title';
 import './App.css';
 
 function App() {
