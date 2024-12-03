@@ -32,14 +32,6 @@ const TextEditor = ({ editorState, setEditorState }) => {
     }
   }, []);
 
-  const editorStyle = {
-    border: "2px solid #b2c7e4",
-    height: "720px",
-    overflowY: "auto",
-    margin: "18px",
-    padding: "0px 16px",
-  };
-
   const customStyleMap = {
     RED: {
       color: "red",
@@ -53,10 +45,6 @@ const TextEditor = ({ editorState, setEditorState }) => {
   const handleEditorChange = (newEditorState) => {
     setEditorState(newEditorState);
   };
-
-  const isNewineStarted = (selectionState) => {
-    return (selectionState.isCollapsed() && selectionState.getStartOffset() === 0)
-  }
 
 
   const handleBeforeInput = (char, currentEditorState) => {
@@ -73,12 +61,11 @@ const TextEditor = ({ editorState, setEditorState }) => {
         return "handled";
       }
     }
-
     return "not-handled";
   };
 
   return (
-    <div style={editorStyle}>
+    <div className="editor" >
       <Editor
         editorState={editorState}
         handleBeforeInput={handleBeforeInput}

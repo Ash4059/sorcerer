@@ -21,3 +21,25 @@
   height: calc(100% - 48px) !important;
   margin: 24px;
 }
+
+.headerContainer {
+  display: flex; 
+  justify-content: space-between; 
+  padding: 10px 16px
+}
+
+.saveBtn {
+  flex-basis: 86px;
+  margin: auto;
+  font-weight: bold;
+  padding: 4px 0;
+  border-color: #b2c7e4;
+}
+
+.editor {
+  border: 2px solid #b2c7e4;
+  height: 720px;
+  overflow-y: auto;
+  margin: 18px;
+  padding: 0px 16px;
+}

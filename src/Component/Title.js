@@ -8,24 +8,12 @@ const Title = ({ editorState }) => {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        padding: "10px 16px",
-      }}
-    >
+    <div className="headerContainer" >
       <h3 style={{ flexBasis: "calc(100% - 92px)", textAlign: "center" }}>
         Demo editor by Ashish Jaiswal
       </h3>
       <button
-        style={{
-          flexBasis: "86px",
-          margin: "auto",
-          fontWeight: "bold",
-          padding: "4px 0",
-          borderColor: "#b2c7e4",
-        }}
+        className="saveBtn"
         onClick={handleSave}
       >
         Save
