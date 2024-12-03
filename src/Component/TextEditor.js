@@ -4,7 +4,6 @@ import {
   EditorState,
   ContentState,
   convertFromRaw,
-  RichUtils,
 } from "draft-js";
 import "draft-js/dist/Draft.css";
 import { COMMANDS } from "../utils/constant";
@@ -59,19 +58,6 @@ const TextEditor = ({ editorState, setEditorState }) => {
     return (selectionState.isCollapsed() && selectionState.getStartOffset() === 0)
   }
 
-  const toggleInlineStyle = (editorState, editorStyle) => {
-    return RichUtils.toggleInlineStyle(
-        editorState,
-        editorStyle
-    );
-  }
-
-  const toggleBlockType = (editorState, editorStyle) => {
-    return RichUtils.toggleBlockType(
-        editorState,
-        editorStyle
-    );
-  }
 
   const handleBeforeInput = (char, currentEditorState) => {
     const contentState = currentEditorState.getCurrentContent();
@@ -81,7 +67,7 @@ const TextEditor = ({ editorState, setEditorState }) => {
     const blockText = block.getText();
 
     if (char === " ") {
-      const updateEditorState = updateStyle(editorState,contentState,selectionState,block,blockText);
+      const updateEditorState = updateStyle(editorState,contentState,selectionState,blockText);
       setEditorState(updateEditorState);
       if (Object.keys(COMMANDS).includes(blockText)) {
         return "handled";

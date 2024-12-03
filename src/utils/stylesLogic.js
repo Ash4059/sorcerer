@@ -5,7 +5,6 @@ export const updateStyle = (
   editorState,
   contentState,
   selectionState,
-  block,
   blockText
 ) => {
   let updateEditorState = editorState;
